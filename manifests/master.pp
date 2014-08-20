@@ -95,6 +95,12 @@ class mesos::master(
     ensure  => directory,
     owner   => $owner,
     group   => $group,
+  }
+
+  # TODO this duplicated in master / slave. move up
+  common::mkdir_p { $conf_dir: } ->
+  file { $conf_dir:
+    ensure  => directory,
     recurse => true,
     purge   => true,
     force   => true,

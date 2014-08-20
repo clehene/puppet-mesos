@@ -1,0 +1,25 @@
+[Unit]
+Description=Mesos <%= @name %>
+After=network.target
+Wants=network.target
+
+[Service]
+Delegate=yes
+ExecStart=/usr/sbin/mesos-<%= @name %> <% if @name=='slave' -%>-containerizers=docker,mesos<% end -%>
+
+EnvironmentFile=/etc/default/mesos-<%= @name %>
+ExecReload=/bin/kill -HUP $MAINPID
+User=root
+Restart=always
+; TODO check if 16K is enough
+LimitNOFILE=16384
+
+<% if @name=='slave' -%>
+Slice=mesos
+CPUAccounting=true
+CPUShares=1024
+MemoryAccounting=true
+<% end -%>
+
+[Install]
+WantedBy=multi-user.target
