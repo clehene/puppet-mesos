@@ -57,6 +57,11 @@ class mesos::repo(
             }
             case $osrel {
               '6', '7': {
+                exec { 'yum-clean-expire-cache':
+                          user => 'root',
+                          path => '/usr/bin',
+                          command => 'yum clean expire-cache',
+                } ->
                 package { 'mesosphere-el-repo':
                   ensure   => present,
                   provider => 'rpm',
