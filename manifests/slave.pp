@@ -75,6 +75,7 @@ class mesos::slave (
   $secret           = undef,
   $syslog_logger    = true,
   $force_provider   = undef, #temporary workaround for starting services
+  $containerizers   = "docker,mesos",
   $use_hiera        = $mesos::use_hiera,
   $single_role      = $mesos::single_role,
 ) inherits mesos {

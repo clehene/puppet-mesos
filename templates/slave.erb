@@ -15,26 +15,46 @@
 # If zookeeper URL is not specified, slaves will connect directly
 # to specified master (not a fault-tolerant mode)
 <% if !@zookeeper_url.nil? && !@zookeeper_url.empty? -%>
-export MESOS_MASTER="<%= @zookeeper_url %>"
+MESOS_MASTER="<%= @zookeeper_url %>"
 <% else -%>
-export MESOS_MASTER="<%= @master %>:<%= @master_port %>"
+MESOS_MASTER="<%= @master %>:<%= @master_port %>"
 <% end -%>
 
 # public slave's ip, must be unique in mesos cluster
 <% if @listen_address -%>
-export MESOS_IP="<%= @listen_address %>"
+MESOS_IP="<%= @listen_address %>"
 <% else -%>
-#export MESOS_IP=""
+#MESOS_IP=""
 <% end -%>
 
 # Port to listen on (default: 5051)
-export MESOS_PORT=<%= @port %>
+MESOS_PORT=<%= @port %>
 
 <% @cgroups.sort.each do |key, val| -%>
-export MESOS_CGROUPS_<%= key.upcase %>="<%= val %>"
+MESOS_CGROUPS_<%= key.upcase %>="<%= val %>"
 <% end if @isolation == 'cgroups' -%>
+
+
+MESOS_isolation='cgroups/cpu,cgroups/mem'
+MESOS_cgroups_root='system.slice/mesos-slave.service'
+MESOS_cgroups_hierarchy=/sys/fs/cgroup
+MESOS_slave_subsystems=cpu,memory
+MESOS_gc_delay=1days
+
+MESOS_executor_registration_timeout=5mins
+
+<% if @listen_address && @listen_address != "" %>
+MESOS_ip="<%= @listen_address %>"
+<% end %>
+MESOS_port=<%= @port %>
+MESOS_log_dir="<%= @log_dir %>"
+MESOS_logbufsecs=1
+MESOS_logging_level="INFO"
+#TODO(clehene) note that we're also passing -containerizers to mesos-slave as this doesn't seem to be working 
+MESOS_containerizers=<%= @containerizers %>
+MESOS_hadoop_home=$HADOOP_HOME
 
 # slave environment variables
 <% @env_var.sort.each do |key,val| -%>
-export <%= key %>="<%= val %>"
+<%= key %>="<%= val %>"
 <% end if @env_var -%>
