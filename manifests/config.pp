@@ -26,25 +26,24 @@ class mesos::config(
 ){
   validate_bool($manage_zk_file)
 
+  File {
+    owner  => $owner,
+    group  => $group,
+  }
+
   if $log_dir {
     file { $log_dir:
       ensure => directory,
-      owner  => $owner,
-      group  => $group,
     }
   }
 
   file { $conf_dir:
     ensure => directory,
-    owner  => $owner,
-    group  => $group,
   }
 
   file { $conf_file:
     ensure  => 'present',
     content => template('mesos/default.erb'),
-    owner   => $owner,
-    group   => $group,
     mode    => '0644',
     require => Package['mesos'],
   }
@@ -57,8 +56,6 @@ class mesos::config(
         false => present,
       },
       content => $zookeeper_url,
-      owner   => $owner,
-      group   => $group,
     }
   }
 

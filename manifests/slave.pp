@@ -99,10 +99,13 @@ class mesos::slave (
     $zookeeper_url = zookeeper_servers_url($zookeeper, $zk_path, $zk_default_port)
   }
 
-  file { $conf_dir:
-    ensure  => directory,
+  File {
     owner   => $owner,
     group   => $group,
+  }
+
+  file { $conf_dir:
+    ensure  => directory,
     recurse => true,
     purge   => true,
     force   => true,
@@ -110,8 +113,6 @@ class mesos::slave (
 
   file { "${conf_dir}/resources":
     ensure  => directory,
-    owner   => $owner,
-    group   => $group,
     require => File[$conf_dir],
     recurse => true,
     purge   => true,
@@ -119,8 +120,6 @@ class mesos::slave (
 
   file { "${conf_dir}/attributes":
     ensure  => directory,
-    owner   => $owner,
-    group   => $group,
     require => File[$conf_dir],
     recurse => true,
     purge   => true,
@@ -176,15 +175,11 @@ class mesos::slave (
 
   file { $work_dir:
     ensure => directory,
-    owner  => $owner,
-    group  => $group,
   }
 
   file { $credentials_file:
     ensure  => $credentials_ensure,
     content => $credentials_content,
-    owner   => $owner,
-    group   => $group,
     mode    => '0400',
   }
 
@@ -221,8 +216,6 @@ class mesos::slave (
   file { $conf_file:
     ensure  => 'present',
     content => template('mesos/slave.erb'),
-    owner   => $owner,
-    group   => $group,
     mode    => '0644',
     require => [Class['mesos::config'], File[$conf_dir], Package['mesos']],
   }

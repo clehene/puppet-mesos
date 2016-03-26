@@ -91,10 +91,13 @@ class mesos::master(
     $zookeeper_url = zookeeper_servers_url($zookeeper, $zk_path, $zk_default_port)
   }
 
-  file { $conf_dir:
-    ensure  => directory,
+  File {
     owner   => $owner,
     group   => $group,
+  }
+
+  file { $conf_dir:
+    ensure  => directory,
   }
 
   # TODO this duplicated in master / slave. move up
@@ -109,23 +112,17 @@ class mesos::master(
 
   file { $work_dir:
     ensure => directory,
-    owner  => $owner,
-    group  => $group,
   }
 
   file { $acls_file:
     ensure  => $acls_ensure,
     content => $acls_content,
-    owner   => $owner,
-    group   => $group,
     mode    => '0444',
   }
 
   file { $credentials_file:
     ensure  => $credentials_ensure,
     content => $credentials_content,
-    owner   => $owner,
-    group   => $group,
     mode    => '0400',
   }
 
@@ -151,10 +148,7 @@ class mesos::master(
   )
 
   file { $conf_file:
-    ensure  => present,
     content => template('mesos/master.erb'),
-    owner   => $owner,
-    group   => $group,
     mode    => '0644',
     require => [File[$conf_dir], Package['mesos']],
   }
