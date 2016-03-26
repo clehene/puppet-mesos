@@ -41,6 +41,7 @@ class mesos::master(
   $credentials      = [],
   $syslog_logger    = true,
   $force_provider   = undef, #temporary workaround for starting services
+  $quorum           = $mesos::quorum,
   $use_hiera        = $mesos::use_hiera,
   $single_role      = $mesos::single_role,
 ) inherits mesos {
