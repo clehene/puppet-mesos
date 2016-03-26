@@ -51,7 +51,7 @@
 class mesos::slave (
   $enable           = true,
   $port             = 5051,
-  $work_dir         = '/tmp/mesos',
+  $work_dir         = '/var/lib/mesos/slave',
   $checkpoint       = false,
   $isolation        = '',
   $conf_dir         = '/etc/mesos-slave',
@@ -104,6 +104,7 @@ class mesos::slave (
     group   => $group,
   }
 
+  common::mkdir_p { $conf_dir: } ->
   file { $conf_dir:
     ensure  => directory,
     recurse => true,
@@ -173,6 +174,7 @@ class mesos::slave (
     notify => Service['mesos-slave'],
   }
 
+  common::mkdir_p { $work_dir: } ->
   file { $work_dir:
     ensure => directory,
   }
